@@ -58,7 +58,7 @@ int builtin_exit(struct Command *cmd) { return ESCAPE_BUILTIN; }
 int builtin_extern(struct Command *cmd) {
   pid_t native_child = fork();
   if (native_child == 0) {
-    execv(cmd->text, cmd->argv);
+    execvp(cmd->text, cmd->argv);
     printf("\n");
     exit(0);
   }

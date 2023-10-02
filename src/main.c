@@ -40,7 +40,7 @@ char **parse_argv(char *input_buffer) {
 int main(void) {
   char inputbuf[DEFAULT_BUFFER_SIZE];
 
-  setenv("MOLSH_PROMPT", "(molsh)> ", FALSE);
+  setenv("MOLSH_PROMPT", "(molsh) > ", FALSE);
   for (;;) {
     printf("%s", getenv("MOLSH_PROMPT"));
 
