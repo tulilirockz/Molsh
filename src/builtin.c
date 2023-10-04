@@ -41,10 +41,8 @@ int builtin_getenv(struct Command *cmd) {
       printf("\n");
       return EXIT_SUCCESS;
     }
-
     printf("%s\n", output);
   }
-
   return EXIT_SUCCESS;
 }
 

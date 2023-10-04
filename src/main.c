@@ -53,6 +53,12 @@ int main(void) {
       continue;
     }
 
+    for (int i = 0; argv[i] != NULL; i++) {
+      if (argv[i][0] == '$') {
+        argv[i] = getenv(argv[i] + 1);
+      }
+    }
+
     struct Command curr_cmd;
 
     curr_cmd.text = inputbuf;
