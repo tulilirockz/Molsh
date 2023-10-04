@@ -7,12 +7,6 @@
 
 #define DEFAULT_BUFFER_SIZE 80
 #define SCANF_SAFE_BUFFER "%79s"
-#define ESCAPE_BUILTIN 10
-#define STRCMP_FOUND_STR 0
-#define CURRENT_COMMAND argv[0]
-#define EXIT_VALID_BUILTIN 11
-#define TRUE 1
-#define FALSE 0
 
 extern char **environ;
 
@@ -40,13 +34,12 @@ char **parse_argv(char *input_buffer) {
 int main(void) {
   char inputbuf[DEFAULT_BUFFER_SIZE];
 
-  setenv("MOLSH_PROMPT", "(molsh) > ", FALSE);
+  setenv("MOLSH_PROMPT", "(molsh) > ", 0);
   for (;;) {
     printf("%s", getenv("MOLSH_PROMPT"));
 
-    fgets(inputbuf, sizeof(inputbuf), stdin);
+    fgets(inputbuf, DEFAULT_BUFFER_SIZE, stdin);
     inputbuf[strcspn(inputbuf, "\n")] = 0;
-
     char **argv = parse_argv(inputbuf);
     if (argv[0] == NULL) {
       free(argv);
@@ -64,7 +57,7 @@ int main(void) {
     curr_cmd.text = inputbuf;
     curr_cmd.argv = argv;
     curr_cmd.operation = tokenize_builtin_cli(inputbuf);
-    int exit_code = run_cmd(&curr_cmd);
+    int exit_code = run_cmd(&curr_cmd, (token_to_func(curr_cmd.operation)));
 
     if (exit_code == ESCAPE_BUILTIN) {
       return EXIT_SUCCESS;

@@ -1,6 +1,5 @@
 #pragma once
 
-typedef int (*fptr)();
 enum ShellToken {
   OP_ECHO,
   OP_FULLENV,
@@ -11,11 +10,33 @@ enum ShellToken {
   OP_CD,
   OP_EXTERN
 };
-struct Command {
-  char *text;                // /bin/ls
-  char **argv;               // /bin/ls -lah
-  enum ShellToken operation; // OP_EXTERN
+enum ExitCode {
+  EXIT_SUCCESS,
+  EXIT_FAILURE,
+  ESCAPE_BUILTIN,
 };
 
+typedef struct Command {
+  char *text;
+  char **argv;
+  enum ShellToken operation;
+} Command;
+
+typedef int (*fptr)(struct Command *cmd);
+
+struct CommandCallback {
+  enum ExitCode exitcode;
+  char *stdout;
+};
+
+typedef struct BuiltinElement {
+  char *commandtext;
+  enum ShellToken operation;
+  fptr func;
+} BuiltinElement;
+
 enum ShellToken tokenize_builtin_cli(char *text);
-int run_cmd(struct Command *cmd);
+
+int run_cmd(struct Command *pcmd, fptr op);
+
+fptr token_to_func(enum ShellToken operation);
