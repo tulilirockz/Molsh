@@ -11,6 +11,11 @@
 
 extern char **environ;
 
+int builtin_cd(struct Command *pcmd) {
+  chdir(pcmd->argv[1]);
+  return EXIT_SUCCESS;
+}
+
 int builtin_clear(struct Command *cmd) {
   fprintf(stdout, "\033[2J");   // clean screen
   fprintf(stdout, "\033[1;1H"); // move cursor to the first line
@@ -80,6 +85,8 @@ int run_cmd(struct Command *cmd) {
     return builtin_clear(cmd);
   case OP_EXTERN:
     return builtin_extern(cmd);
+  case OP_CD:
+    return builtin_cd(cmd);
   }
 };
 
@@ -106,6 +113,10 @@ enum ShellToken tokenize_builtin_cli(char *text) {
 
   if (strcmp(text, "exit") == STRCMP_FOUND_STR) {
     return OP_EXIT;
+  }
+
+  if (strcmp(text, "cd") == STRCMP_FOUND_STR) {
+    return OP_CD;
   }
 
   return OP_EXTERN;

@@ -8,6 +8,7 @@ enum ShellToken {
   OP_SETENV,
   OP_CLEAR,
   OP_EXIT,
+  OP_CD,
   OP_EXTERN
 };
 struct Command {
