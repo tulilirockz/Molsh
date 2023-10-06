@@ -7,6 +7,8 @@
 
 #define DEFAULT_BUFFER_SIZE 80
 #define SCANF_SAFE_BUFFER "%79s"
+#define SETENV_REPLACE 1
+#define SETENV_DO_NOT_REPLACE 0
 
 extern char **environ;
 
@@ -33,10 +35,12 @@ char **parse_argv(char *input_buffer) {
 
 int main(void) {
   char inputbuf[DEFAULT_BUFFER_SIZE];
+  const char *MOLSH_DEFAULT_PROMPT = "(molsh) > ";
 
-  setenv("MOLSH_PROMPT", "(molsh) > ", 0);
+  setenv("MOLSH_PROMPT", MOLSH_DEFAULT_PROMPT, SETENV_DO_NOT_REPLACE);
   for (;;) {
     printf("%s", getenv("MOLSH_PROMPT"));
+    setenv("MOLSH_PROMPT", MOLSH_DEFAULT_PROMPT, SETENV_REPLACE);
 
     fgets(inputbuf, DEFAULT_BUFFER_SIZE, stdin);
     inputbuf[strcspn(inputbuf, "\n")] = 0;
@@ -59,14 +63,15 @@ int main(void) {
     curr_cmd.argv = argv;
     curr_cmd.operation = element.operation;
     int exit_code = run_cmd(&curr_cmd, element.func);
+    char exit = exit_code + '0';
 
-    // setenv("?", (const char *)exit_code, 1);
+    setenv("?", &exit, SETENV_REPLACE);
     if (exit_code == ESCAPE_BUILTIN) {
       return EXIT_SUCCESS;
     }
-    // if (exit_code != EXIT_SUCCESS) {
-    //   setenv(const char *name, const char *value, int replace)
-    // }
+    if (exit_code != EXIT_SUCCESS) {
+      setenv("MOLSH_PROMPT", "\033[31m(!)\033[0m (molsh) > ", SETENV_REPLACE);
+    }
 
     free(argv);
   };
