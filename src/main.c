@@ -35,7 +35,7 @@ char **parse_argv(char *input_buffer) {
 
 int main(void) {
   char inputbuf[DEFAULT_BUFFER_SIZE];
-  const char *MOLSH_DEFAULT_PROMPT = "(molsh) > ";
+  const char *MOLSH_DEFAULT_PROMPT = "\033[36m(molsh)\033[0m > ";
 
   setenv("MOLSH_PROMPT", MOLSH_DEFAULT_PROMPT, SETENV_DO_NOT_REPLACE);
   for (;;) {
@@ -70,7 +70,7 @@ int main(void) {
       return EXIT_SUCCESS;
     }
     if (exit_code != EXIT_SUCCESS) {
-      setenv("MOLSH_PROMPT", "\033[31m(!)\033[0m (molsh) > ", SETENV_REPLACE);
+      setenv("MOLSH_PROMPT", "\033[31m(molsh)\033[0m > ", SETENV_REPLACE);
     }
 
     free(argv);
