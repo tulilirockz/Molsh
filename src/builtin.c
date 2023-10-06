@@ -1,5 +1,6 @@
 #include "builtin.h"
 #include "builtin-func.h"
+#include <stdio.h>
 #include <string.h>
 
 #define STRCMP_FOUND_STR 0
@@ -17,11 +18,15 @@ struct BuiltinElement valid_builtins[] = {
 int run_cmd(struct Command *pcmd, fptr op) { return (op(pcmd)); };
 
 enum ShellToken tokenize_builtin_cli(char *text) {
-  for (int i = 0; i <= sizeof(valid_builtins) / sizeof(valid_builtins[0]);
-       i++) {
-    if (strcmp(valid_builtins[i].commandtext, text) == STRCMP_FOUND_STR) {
-      return valid_builtins[i].operation;
+  struct BuiltinElement *ptr = valid_builtins;
+  struct BuiltinElement *endPtr =
+      valid_builtins + sizeof(valid_builtins) / sizeof(valid_builtins[0]);
+
+  while (ptr < endPtr) {
+    if (strcmp(ptr->commandtext, text) == STRCMP_FOUND_STR) {
+      return ptr->operation;
     }
+    ptr++;
   }
   return OP_EXTERN;
 };
