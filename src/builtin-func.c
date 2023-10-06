@@ -48,19 +48,26 @@ int builtin_getenv(struct Command *pcmd) {
 }
 
 int builtin_setenv(struct Command *pcmd) {
-  setenv(pcmd->argv[1], pcmd->argv[2], 1);
-  return EXIT_SUCCESS;
+  return setenv(pcmd->argv[1], pcmd->argv[2], 1);
 };
 
 int builtin_exit(struct Command *pcmd) { return ESCAPE_BUILTIN; }
 
 int builtin_extern(struct Command *pcmd) {
   pid_t native_child = fork();
+  int exit_code = 0;
+
+  if (native_child == -1) {
+    perror("Failed to fork process");
+    _Exit(1);
+  }
+
   if (native_child == 0) {
     execvp(pcmd->text, pcmd->argv);
     printf("\n");
-    exit(0);
+    _Exit(0);
   }
-  wait(&native_child);
-  return EXIT_SUCCESS;
+
+  waitpid(native_child, &exit_code, 0);
+  return exit_code;
 };

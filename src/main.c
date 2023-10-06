@@ -52,16 +52,22 @@ int main(void) {
       }
     }
 
+    struct BuiltinElement element = text_to_builtin(inputbuf);
     struct Command curr_cmd;
 
     curr_cmd.text = inputbuf;
     curr_cmd.argv = argv;
-    curr_cmd.operation = tokenize_builtin_cli(inputbuf);
-    int exit_code = run_cmd(&curr_cmd, (token_to_func(curr_cmd.operation)));
+    curr_cmd.operation = element.operation;
+    int exit_code = run_cmd(&curr_cmd, element.func);
 
+    // setenv("?", (const char *)exit_code, 1);
     if (exit_code == ESCAPE_BUILTIN) {
       return EXIT_SUCCESS;
     }
+    // if (exit_code != EXIT_SUCCESS) {
+    //   setenv(const char *name, const char *value, int replace)
+    // }
+
     free(argv);
   };
 

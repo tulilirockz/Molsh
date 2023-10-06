@@ -35,8 +35,6 @@ typedef struct BuiltinElement {
   fptr func;
 } BuiltinElement;
 
-enum ShellToken tokenize_builtin_cli(char *text);
+BuiltinElement text_to_builtin(char *text);
 
 int run_cmd(struct Command *pcmd, fptr op);
-
-fptr token_to_func(enum ShellToken operation);
