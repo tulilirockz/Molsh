@@ -1,6 +1,6 @@
 #pragma once
 
-enum ShellToken {
+enum ShellOperation {
   OP_ECHO,
   OP_FULLENV,
   OP_GETENV,
@@ -16,25 +16,34 @@ enum ExitCode {
   ESCAPE_BUILTIN,
 };
 
+// raw_text: "ls"
+// args: {ls -lah .}
+// p_cmddef: OP_EXTERN
+// p_callback: 0, ".git\tsrc\t.editorconfig\n"
 typedef struct Command {
-  char *text;
+  char *raw_text;
   char **argv;
-  enum ShellToken operation;
+  struct CommandDefinition *p_cmddef;
+  struct CommandCallback *p_callback;
+  struct Command *p_next;
 } Command;
 
 typedef int (*fptr)(struct Command *cmd);
 
-struct CommandCallback {
+typedef struct CommandCallback {
   enum ExitCode exitcode;
   char *stdout;
-};
+} CommandCallback;
 
-typedef struct BuiltinElement {
+typedef struct CommandDefinition {
   char *commandtext;
-  enum ShellToken operation;
+  int argc;
+  enum ShellOperation operation;
   fptr func;
-} BuiltinElement;
+} CommandDefinition;
 
-BuiltinElement text_to_builtin(char *text);
+struct CommandDefinition *text_to_builtin(int init, char ***argv);
 
 int run_cmd(struct Command *pcmd, fptr op);
+
+char **parse_argv(char *text);

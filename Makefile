@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Werror
+CFLAGS = -Wall -Werror -static
 BUILD_DIR = build
 BIN = molsh
 

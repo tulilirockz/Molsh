@@ -7,26 +7,26 @@
 
 extern char **environ;
 
-int builtin_cd(struct Command *pcmd) {
-  chdir(pcmd->argv[1]);
+int builtin_cd(struct Command *p_cmd) {
+  chdir(p_cmd->argv[1]);
   return EXIT_SUCCESS;
 }
 
-int builtin_clear(struct Command *pcmd) {
+int builtin_clear(struct Command *p_cmd) {
   fprintf(stdout, "\033[2J");   // clean screen
   fprintf(stdout, "\033[1;1H"); // move cursor to the first line
   return EXIT_SUCCESS;
 }
 
-int builtin_echo(struct Command *pcmd) {
-  for (int i = 1; pcmd->argv[i] != NULL; i++) {
-    printf("%s ", pcmd->argv[i]);
+int builtin_echo(struct Command *p_cmd) {
+  for (int i = 1; p_cmd->argv[i] != NULL; i++) {
+    printf("%s ", p_cmd->argv[i]);
   }
   printf("\n");
   return EXIT_SUCCESS;
 }
 
-int builtin_fullenv(struct Command *pcmd) {
+int builtin_fullenv(struct Command *p_cmd) {
   char **s = environ;
 
   for (; *s; s++) {
@@ -35,9 +35,9 @@ int builtin_fullenv(struct Command *pcmd) {
   return EXIT_SUCCESS;
 }
 
-int builtin_getenv(struct Command *pcmd) {
-  for (int i = 1; pcmd->argv[i] != NULL; i++) {
-    char *output = getenv(pcmd->argv[i]);
+int builtin_getenv(struct Command *p_cmd) {
+  for (int i = 1; p_cmd->argv[i] != NULL; i++) {
+    char *output = getenv(p_cmd->argv[i]);
     if (output == NULL) {
       printf("\n");
       return EXIT_SUCCESS;
@@ -47,13 +47,13 @@ int builtin_getenv(struct Command *pcmd) {
   return EXIT_SUCCESS;
 }
 
-int builtin_setenv(struct Command *pcmd) {
-  return setenv(pcmd->argv[1], pcmd->argv[2], 1);
+int builtin_setenv(struct Command *p_cmd) {
+  return setenv(p_cmd->argv[1], p_cmd->argv[2], 1);
 };
 
-int builtin_exit(struct Command *pcmd) { return ESCAPE_BUILTIN; }
+int builtin_exit(struct Command *p_cmd) { return ESCAPE_BUILTIN; }
 
-int builtin_extern(struct Command *pcmd) {
+int builtin_extern(struct Command *p_cmd) {
   pid_t native_child = fork();
   int exit_code = 0;
 
@@ -63,7 +63,7 @@ int builtin_extern(struct Command *pcmd) {
   }
 
   if (native_child == 0) {
-    execvp(pcmd->text, pcmd->argv);
+    execvp(p_cmd->raw_text, p_cmd->argv);
     printf("\n");
     _Exit(0);
   }
